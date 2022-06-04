@@ -44,8 +44,7 @@ class KMeans:
         '''
         clalist = self.calcDis(centroids)
         minDistIndices = np.argmin(clalist, axis=1)
-        newCentroids = pd.DataFrame(
-            self.dataSet).groupby(minDistIndices).mean()
+        newCentroids = pd.DataFrame(self.dataSet).groupby(minDistIndices).mean()
         newCentroids = newCentroids.values
         changed = newCentroids - centroids
         return changed, newCentroids
@@ -56,8 +55,7 @@ class KMeans:
         param self
         return          质心，聚类
         '''
-        centroids = self.dataSet[np.random.choice(
-            self.dataSet.shape[0], size=self.k, replace=False), :]
+        centroids = self.dataSet[np.random.choice(self.dataSet.shape[0], size=self.k, replace=False), :]
         changed, newCentroids = self.classify(centroids)
         while np.any(changed != 0):
             changed, newCentroids = self.classify(newCentroids)

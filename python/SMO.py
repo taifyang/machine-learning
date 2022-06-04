@@ -91,8 +91,7 @@ class SimpleSMO(object):
                     if L == H:
                         print("L=H")
                         continue
-                    eta = 2 * self.Kernal(i, j) - \
-                        self.Kernal(i, i)-self.Kernal(j, j)
+                    eta = 2 * self.Kernal(i, j) - self.Kernal(i, i)-self.Kernal(j, j)
                     if eta >= 0:
                         print("eta>=0")
                         continue
@@ -101,12 +100,9 @@ class SimpleSMO(object):
                     if abs(self.alpha[j]-alpha_j_old) < 0.00001:
                         print("j not moving enough")
                         continue
-                    self.alpha[i] += self.y[i]*self.y[j] * \
-                        (alpha_j_old-self.alpha[j])
-                    b_i_new = self.b - E_i - y[i]*self.Kernal(i, i)*(
-                        self.alpha[i]-alpha_i_old) - y[j]*self.Kernal(j, i)*(self.alpha[j]-alpha_j_old)
-                    b_j_new = self.b - E_j - y[i]*self.Kernal(i, j)*(
-                        self.alpha[i]-alpha_i_old) - y[j]*self.Kernal(j, j)*(self.alpha[j]-alpha_j_old)
+                    self.alpha[i] += self.y[i]*self.y[j] * (alpha_j_old-self.alpha[j])
+                    b_i_new = self.b - E_i - y[i]*self.Kernal(i, i)*(self.alpha[i]-alpha_i_old) - y[j]*self.Kernal(j, i)*(self.alpha[j]-alpha_j_old)
+                    b_j_new = self.b - E_j - y[i]*self.Kernal(i, j)*(self.alpha[i]-alpha_i_old) - y[j]*self.Kernal(j, j)*(self.alpha[j]-alpha_j_old)
                     if (self.alpha[i] > 0 and self.alpha[i] < self.c):
                         self.b = b_i_new
                     elif (self.alpha[j] > 0 and self.alpha[j] < self.c):
@@ -114,8 +110,7 @@ class SimpleSMO(object):
                     else:
                         self.b = (b_i_new + b_j_new)/2
                     alphaPairsChanged += 1
-                    print("External loop: %d; Internal loop i :%d; alphaPairsChanged :%d" % (
-                        iter, i, alphaPairsChanged))
+                    print("External loop: %d; Internal loop i :%d; alphaPairsChanged :%d" % (iter, i, alphaPairsChanged))
             if (alphaPairsChanged == 0):
                 iter += 1
             else:

@@ -82,16 +82,14 @@ class GaussionNB:
                     tkey = str(c)+'|'+str(yy)
                     mu = self.mean[tkey]
                     sigma = self.var[tkey]
-                    self.predict_prob[yy] = self.predict_prob[yy] * \
-                        self._calculat_prob_gaussion(mu, sigma, d)
+                    self.predict_prob[yy] = self.predict_prob[yy] * self._calculat_prob_gaussion(mu, sigma, d)
             label = max(self.predict_prob, key=self.predict_prob.get)
             labels.append(label)
         return labels
 
 
 if __name__ == '__main__':
-    x = np.array([[1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3],
-                 [1, 2, 2, 1, 1, 1, 2, 2, 3, 3, 3, 2, 2, 3, 3]])
+    x = np.array([[1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3], [1, 2, 2, 1, 1, 1, 2, 2, 3, 3, 3, 2, 2, 3, 3]])
     y = np.array([-1, -1, 1, 1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1])
     gnb = GaussionNB()
     gnb.fit(x, y)

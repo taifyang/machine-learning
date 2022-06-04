@@ -48,8 +48,7 @@ class AdaBoost:
             for j in range(-1, int(numSteps) + 1):
                 for inequal in ['lt', 'gt']:
                     threshVal = rangeMin + j * stepSize
-                    predictedVals = self.stumpClassify(
-                        dataMatrix, i, threshVal, inequal)
+                    predictedVals = self.stumpClassify(dataMatrix, i, threshVal, inequal)
                     errArr = np.mat(np.ones((m, 1)))
                     errArr[predictedVals == labelMat] = 0
                     weightedError = D.T * errArr
@@ -86,8 +85,7 @@ class AdaBoost:
             D = D / D.sum()
 
             aggClassEst += alpha * classEst
-            aggErrors = np.multiply(
-                np.sign(aggClassEst) != np.mat(y).T, np.ones((m, 1)))
+            aggErrors = np.multiply(np.sign(aggClassEst) != np.mat(y).T, np.ones((m, 1)))
             errorRate = aggErrors.sum() / m
 
             if errorRate == 0.0:
@@ -105,9 +103,7 @@ class AdaBoost:
         m = dataMatrix.shape[0]
         aggClassEst = np.mat(np.zeros((m, 1)))
         for i in range(len(self.weakClassArr)):
-            # 基于stumpClassify()对每个弱分类器得到一个类别的估计值
-            classEst = self.stumpClassify(
-                dataMatrix, self.weakClassArr[i]['dim'], self.weakClassArr[i]['thresh'], self.weakClassArr[i]['ineq'])
+            classEst = self.stumpClassify(dataMatrix, self.weakClassArr[i]['dim'], self.weakClassArr[i]['thresh'], self.weakClassArr[i]['ineq'])
             aggClassEst += self.weakClassArr[i]['alpha'] * classEst
         return np.sign(aggClassEst)
 

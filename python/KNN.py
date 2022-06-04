@@ -37,8 +37,7 @@ class KNN():
             vote = self.y[dist_sorted[i]]
             count[vote] = count.get(vote, 0) + 1
 
-        count_sorted = sorted(
-            count.items(), key=operator.itemgetter(1), reverse=True)
+        count_sorted = sorted(count.items(), key=operator.itemgetter(1), reverse=True)
         return count_sorted[0][0]
 
 

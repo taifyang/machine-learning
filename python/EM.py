@@ -32,11 +32,9 @@ class EM:
         for i in range(0, self.N):
             denom = 0
             for j in range(0, self.k):
-                denom += math.exp((-1/(2*(float(self.sigma**2))))
-                                  * (float(self.x[0, i]-self.mu[j]))**2)
+                denom += math.exp((-1/(2*(float(self.sigma**2)))) * (float(self.x[0, i]-self.mu[j]))**2)
             for j in range(0, k):
-                numer = math.exp((-1/(2*(float(self.sigma**2))))
-                                 * (float(self.x[0, i]-self.mu[j]))**2)
+                numer = math.exp((-1/(2*(float(self.sigma**2)))) * (float(self.x[0, i]-self.mu[j]))**2)
                 self.expectations[i, j] = numer / denom
 
     def m_step(self):

@@ -14,8 +14,7 @@ def LinearRegression(x, y, alpha, iters):
     y = y.T
     w = np.mat(np.zeros(x.shape[1]))
     for i in range(iters):
-        print('iters:', i, ' cost:', 1 / (2 * y.size)
-              * np.sum(np.power(x * w.T - y, 2)))
+        print('iters:', i, ' cost:', 1 / (2 * y.size)  * np.sum(np.power(x * w.T - y, 2)))
         w -= (alpha / y.size) * (x * w.T - y).T * x
     return np.array(w)[0][0], np.array(w)[0][1:]
 

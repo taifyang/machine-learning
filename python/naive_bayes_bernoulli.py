@@ -35,8 +35,7 @@ class BernoulliNB:
             else:
                 for d in self.classes:
                     c_num = np.sum(np.equal(y, d))
-                    self.class_prior[d] = (
-                        c_num+self.alpha) / (len(y) + class_num * self.alpha)
+                    self.class_prior[d] = (c_num+self.alpha) / (len(y) + class_num * self.alpha)
 
         self.conditional_prob = {}
         x_class = [0, 1]
@@ -45,12 +44,10 @@ class BernoulliNB:
             y_index = [i for i, label in enumerate(y) if label == yy]
             for i in range(len(x)):
                 for c in x_class:
-                    x_index = [j for j, feature in enumerate(
-                        x[i]) if feature == c]
+                    x_index = [j for j, feature in enumerate(x[i]) if feature == c]
                     xy_count = len(set(x_index) & set(y_index))
                     pkey = str(c) + '|' + str(yy)
-                    self.conditional_prob[pkey] = (
-                        xy_count+self.alpha) / (len(y_index)+2)
+                    self.conditional_prob[pkey] = (xy_count+self.alpha) / (len(y_index)+2)
 
         return self
 
@@ -66,16 +63,14 @@ class BernoulliNB:
             for j in self.classes:
                 self.predict_prob[j] = self.class_prior[j]
                 for d in x[i]:
-                    self.predict_prob[j] = self.predict_prob[j] * \
-                        self.conditional_prob[str(d) + '|' + str(j)]
+                    self.predict_prob[j] = self.predict_prob[j] * self.conditional_prob[str(d) + '|' + str(j)]
             label = max(self.predict_prob, key=self.predict_prob.get)
             labels.append(label)
         return labels
 
 
 if __name__ == '__main__':
-    x = np.array([[1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
-                 [0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]])
+    x = np.array([[1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1], [0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]])
     y = np.array([-1, -1, 1, 1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1])
     bnb = BernoulliNB(alpha=1.0, fit_prior=True)
     bnb.fit(x, y)

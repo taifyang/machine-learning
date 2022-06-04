@@ -78,7 +78,6 @@ class ID3:
         if len(np.unique(data[:, -1])) == 1:
             return data[0, -1]
         if data.shape[1] == 1:
-            print(collections.Counter(data[:, -1]).most_common()[0][0])
             return collections.Counter(data[:, -1]).most_common()[0][0]
         bestFeature = self.getBestFeature(data)
         bestFeatureLabel = feature_label[bestFeature]
@@ -88,8 +87,7 @@ class ID3:
         for value in np.unique(data[:, bestFeature]):
             sub_labels = feature_label[:]
             splited_data = self.splitdata(data, bestFeature, value)
-            treeDict[bestFeatureLabel][value] = self.CreateTree(
-                splited_data, sub_labels)
+            treeDict[bestFeatureLabel][value] = self.CreateTree(splited_data, sub_labels)
         return treeDict
 
     def fit(self):
