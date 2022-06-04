@@ -3,12 +3,26 @@
 #include <map>
 #include <algorithm>
 
-//kÁÚ½üÄ£ĞÍ
+/**
+* @description: 	KNNæ¨¡å‹
+*/
 class KNN
 {
 public:
-	KNN(std::vector<std::vector<float>> x, std::vector<float> y, int k, float p) : m_x(x), m_y(y), m_k(k), m_p(p) {};
+	/**
+	* @description: 	æ„é€ å‡½æ•°
+	* @param x			ç‰¹å¾
+	* @param y			æ ‡ç­¾
+	* @param k			é‚»è¿‘æ•°
+	* @param p			åº¦é‡æ–¹å¼
+	*/
+	KNN(std::vector<std::vector<float>> x, std::vector<float> y, int k, float p) : m_x(x), m_y(y), m_k(k), m_p(p) { ; };
 
+	/**
+	* @description: 	é¢„æµ‹
+	* @param x			è¾“å…¥ç‰¹å¾
+	* @return
+	*/
 	int predict(std::vector<std::vector<float>> x)
 	{
 		x.resize(m_x.size());
@@ -17,7 +31,6 @@ public:
 			x[i] = x[0];
 		}
 
-		//¼ÆËãÔ¤²âÊı¾İºÍÑµÁ·Êı¾İµÄ²îÖµ
 		std::vector<std::vector<float>> diff = x;
 		for (size_t i = 0; i < diff.size(); i++)
 		{
@@ -27,7 +40,6 @@ public:
 			}
 		}
 
-		//¼ÆËã·¶Êı
 		std::vector<float> dist(diff.size(), 0);
 		for (size_t i = 0; i < diff.size(); i++)
 		{
@@ -38,12 +50,11 @@ public:
 			dist[i] = pow(dist[i], 1.0 / m_p);
 		}
 
-		//·µ»Ø´ÓĞ¡µ½´óÅÅĞòµÄË÷Òı
-		std::vector<int>  dist_sorted(dist.size());
-		for (size_t i = 0; i != dist_sorted.size(); ++i) dist_sorted[i] = i;
-		std::sort(dist_sorted.begin(), dist_sorted.end(), [&dist](size_t i, size_t j) {return dist[i] <  dist[j]; });
+		std::vector<int> dist_sorted(dist.size());
+		for (size_t i = 0; i != dist_sorted.size(); ++i)
+			dist_sorted[i] = i;
+		std::sort(dist_sorted.begin(), dist_sorted.end(), [&dist](size_t i, size_t j) { return dist[i] < dist[j]; });
 
-		//·ÖÀàÍ¶Æ±
 		std::map<float, int> count;
 		for (size_t i = 0; i < m_k; i++)
 		{
@@ -51,26 +62,37 @@ public:
 			count[vote] += 1;
 		}
 
-		//·µ»ØÍ¶Æ±×î¶àµÄÀà±ğ±êÇ©
 		return count.rbegin()->first;
 	}
-	
+
 private:
+	/**
+	* @description: 	ç‰¹å¾
+	*/
 	std::vector<std::vector<float>> m_x;
+
+	/**
+	* @description: 	æ ‡ç­¾
+	*/
 	std::vector<float> m_y;
+
+	/**
+	* @description: 	é‚»è¿‘æ•°
+	*/
 	int m_k;
+
+	/**
+	* @description: 	åº¦é‡æ–¹å¼
+	*/
 	float m_p;
 };
 
-
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-	std::vector<std::vector<float>> x = { { 0, 10 },{ 1, 8 },{ 10, 1 },{ 7, 4 } };
-	std::vector<float> y = { 0, 0, 1, 1 };
-
+	std::vector<std::vector<float>> x = {{0, 10}, {1, 8}, {10, 1}, {7, 4}};
+	std::vector<float> y = {0, 0, 1, 1};
 	KNN knn = KNN(x, y, 3, 2);
-	std::cout << "Ô¤²âÖµÎª£º" << knn.predict({ {6,2} }) << std::endl;
-
+	std::cout << "é¢„æµ‹å€¼ä¸ºï¼š" << knn.predict({{6, 2}}) << std::endl;
 	system("pause");
 	return EXIT_SUCCESS;
 }

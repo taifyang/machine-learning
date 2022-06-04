@@ -2,10 +2,17 @@
 #include <vector>
 #include <time.h>
 
-//¸ĞÖª»úÄ£ĞÍ
+/**
+* @description: 	Pocketæ¨¡å‹
+*/
 class Pocket
 {
 public:
+	/**
+	* @description: 	æ„é€ å‡½æ•°
+	* @param x			ç‰¹å¾
+	* @param y			æ ‡ç­¾
+	*/
 	Pocket(std::vector<std::vector<float>> x, std::vector<float> y)
 	{
 		m_x = x;
@@ -16,6 +23,13 @@ public:
 		m_best_b = 0;
 	}
 
+	/**
+	* @description: 	è®¡ç®—y
+	* @param w			æƒé‡
+	* @param b			åå·®
+	* @param x			x
+	* @return 			y
+	*/
 	float sign(std::vector<float> w, float b, std::vector<float> x)
 	{
 		float y = b;
@@ -26,20 +40,29 @@ public:
 		return y;
 	}
 
+	/**
+	* @description: 	åˆ†ç±»
+	* @param w			æƒé‡
+	* @param b			åå·®
+	* @return 			è¯¯åˆ†ç±»å€¼
+	*/
 	std::vector<int> classify(std::vector<float> w, float b)
 	{
 		std::vector<int> mistakes;
 		for (size_t i = 0; i < m_x.size(); i++)
 		{
 			float tmp_y = sign(w, b, m_x[i]);
-			if (tmp_y*m_y[i] <= 0) //Èç¹ûÎó·ÖÀà
-			{
+			if (tmp_y * m_y[i] <= 0)
 				mistakes.push_back(i);
-			}
 		}
 		return mistakes;
 	}
 
+	/**
+	* @description: 	æ›´æ–°æƒé‡
+	* @param label_i	æ ‡ç­¾
+	* @param data_i	æ•°æ®
+	*/
 	void update(float label_i, std::vector<float> data_i)
 	{
 		std::vector<float> tmp_w(m_w.size());
@@ -63,6 +86,10 @@ public:
 		m_b = label_i + m_b;
 	}
 
+	/**
+	* @description: 	è®­ç»ƒ
+	* @param max_iters	æœ€å¤§è¿­ä»£æ¬¡æ•°
+	*/
 	void train(int max_iters)
 	{
 		int iters = 0;
@@ -72,9 +99,10 @@ public:
 			std::vector<int> mistakes = classify(m_w, m_b);
 			if (mistakes.size() == 0)
 			{
-				std::cout << "×îÖÕÑµÁ·µÃµ½µÄwÎª£º";
-				for (auto i : m_w)	std::cout << i << " ";
-				std::cout << "\n×îÖÕÑµÁ·µÃµ½µÄbÎª£º";
+				std::cout << "æœ€ç»ˆè®­ç»ƒå¾—åˆ°çš„wä¸ºï¼š";
+				for (auto i : m_w)
+					std::cout << i << " ";
+				std::cout << "\næœ€ç»ˆè®­ç»ƒå¾—åˆ°çš„bä¸ºï¼š";
 				std::cout << m_b << "\n";
 				break;
 			}
@@ -84,9 +112,10 @@ public:
 			++iters;
 			if (iters == max_iters)
 			{
-				std::cout << "×îÖÕÑµÁ·µÃµ½µÄwÎª£º";
-				for (auto i : m_w)	std::cout << i << " ";
-				std::cout << "\n×îÖÕÑµÁ·µÃµ½µÄbÎª£º";
+				std::cout << "æœ€ç»ˆè®­ç»ƒå¾—åˆ°çš„wä¸ºï¼š";
+				for (auto i : m_w)
+					std::cout << i << " ";
+				std::cout << "\næœ€ç»ˆè®­ç»ƒå¾—åˆ°çš„bä¸ºï¼š";
 				std::cout << m_b << "\n";
 				bool isFind = true;
 			}
@@ -94,24 +123,43 @@ public:
 	}
 
 private:
+	/**
+	* @description: 	ç‰¹å¾
+	*/
 	std::vector<std::vector<float>> m_x;
+
+	/**
+	* @description: 	æ ‡ç­¾
+	*/
 	std::vector<float> m_y;
+
+	/**
+	* @description: 	æƒé‡
+	*/
 	std::vector<float> m_w;
+
+	/**
+	* @description: 	æœ€ä½³æƒé‡
+	*/
 	std::vector<float> m_best_w;
+
+	/**
+	* @description: 	åå·®
+	*/
 	float m_b;
+
+	/**
+	* @description: 	æœ€ä½³åå·®
+	*/
 	float m_best_b;
 };
 
-
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-	std::vector<std::vector<float>> x = { { 3, -3 },{ 4, -3 },{ 1, 1 },{ 1, 2 } };
-	std::vector<float> y = { -1, -1, 1, 1 };
-
-	Pocket mypocket = Pocket(x, y);
-	mypocket.train(50);
-
+	std::vector<std::vector<float>> x = {{3, -3}, {4, -3}, {1, 1}, {1, 2}};
+	std::vector<float> y = {-1, -1, 1, 1};
+	Pocket pocket = Pocket(x, y);
+	pocket.train(100);
 	system("pause");
 	return EXIT_SUCCESS;
 }
-

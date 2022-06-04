@@ -7,5 +7,5 @@ if __name__ == '__main__':
     k_means = KMeans(n_clusters=2)
     k_means.fit(x)
     y_predict = k_means.predict(x)
-    print(k_means.predict((x[:,:])))
+    print(k_means.predict((x[:, :])))
     print(k_means.cluster_centers_)

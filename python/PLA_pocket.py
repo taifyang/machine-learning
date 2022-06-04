@@ -1,28 +1,57 @@
 import numpy as np
 import random
  
-#感知机模型
+'''
+description:    Pocket模型
+'''
 class Pocket:
+    '''
+    description:    构造函数
+    param self
+    param x         特征
+    param y         标签
+    '''    
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.w = np.zeros(x.shape[1])  #初始化权重，w1,w2均为0
-        self.best_w = np.zeros(x.shape[1])  #最好
+        self.w = np.zeros(x.shape[1])  
+        self.best_w = np.zeros(x.shape[1])  
         self.b = 0
         self.best_b = 0
  
+    '''
+    description:    计算y
+    param self
+    param w         权重
+    param b         偏差
+    param x         x
+    return          y
+    ''' 
     def sign(self, w, b, x):
         y = np.dot(x, w) + b
         return int(y)
 
-    def classify(self,w,b):
+    '''
+    description:    分类
+    param self
+    param w         权重
+    param b         偏差
+    return          误分类值
+    '''
+    def classify(self, w, b):
         mistakes = []
         for i in range(self.x.shape[0]):
             tmpY = self.sign(w, b, self.x[i, :])
-            if tmpY * self.y[i] <= 0:  # 如果是误分类
+            if tmpY * self.y[i] <= 0:  
                 mistakes.append(i)
         return mistakes
 
+    '''
+    description:    更新权重
+    param self
+    param label_i   标签
+    param data_i    数据
+    '''
     def update(self, label_i, data_i):
         tmp = label_i * data_i
         tmpw = tmp + self.w
@@ -33,6 +62,12 @@ class Pocket:
         self.w = tmp + self.w
         self.b = self.b + label_i
  
+    '''
+    description:        训练
+    param self
+    param max_iters     最大迭代次数
+    return              权重和偏差
+    ''' 
     def train(self,max_iters):
         iters = 0
         isFind = False
@@ -49,8 +84,8 @@ class Pocket:
 
 
 if __name__ == '__main__':
-    x = np.array([[3,-3],[4,-3],[1,1],[1,2]])
+    x = np.array([[3,-3], [4,-3], [1,1], [1,2]])
     y = np.array([-1, -1, 1, 1])
     myPocket_PLA = Pocket(x, y)
-    w, b = myPocket_PLA.train(50)
+    w, b = myPocket_PLA.train(100)
     print('最终训练得到的w和b为：', w, b)

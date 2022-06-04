@@ -2,7 +2,13 @@
 #include <vector>
 #include <Eigen/Dense>
 
-//ÏßĞÔ»Ø¹éÄ£ĞÍ
+/**
+ * @description: 	çº¿æ€§å›å½’æ¨¡å‹
+ * @param x			ç‰¹å¾
+ * @param y			æ ‡ç­¾
+ * @param alpha		å­¦ä¹ ç‡
+ * @param iters		è¿­ä»£æ¬¡æ•°
+ */
 void LinearRegression(std::vector<std::vector<float>> x, std::vector<float> y, float alpha, int iters)
 {
 	for (size_t i = 0; i < x.size(); i++)
@@ -28,20 +34,17 @@ void LinearRegression(std::vector<std::vector<float>> x, std::vector<float> y, f
 
 	for (size_t i = 0; i < iters; i++)
 	{
-		mat_w -= (alpha / y.size())*(mat_x*mat_w.transpose() - mat_y).transpose()*mat_x;
-		std::cout <<"iters: " << i << " cost: " << 1.0 / (2 * y.size())*(mat_x*mat_w.transpose() - mat_y).squaredNorm() << std::endl;
+		mat_w -= (alpha / y.size()) * (mat_x * mat_w.transpose() - mat_y).transpose() * mat_x;
+		std::cout << "iters: " << i << " cost: " << 1.0 / (2 * y.size()) * (mat_x * mat_w.transpose() - mat_y).squaredNorm() << std::endl;
 	}
-	std::cout << "×îÖÕÑµÁ·µÃµ½µÄwÎª£º" << mat_w << std::endl;
+	std::cout << "æœ€ç»ˆè®­ç»ƒå¾—åˆ°çš„wå’Œbä¸ºï¼š" << mat_w << std::endl;
 }
 
-
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-	std::vector<std::vector<float>> x = { { 1 },{ 2 },{ 3 },{ 4 } };
-	std::vector<float> y = { 1, 2, 2.9f, 4.1f };
-
+	std::vector<std::vector<float>> x = {{1}, {2}, {3}, {4}};
+	std::vector<float> y = {1, 2, 2.9f, 4.1f};
 	LinearRegression(x, y, 0.1, 100);
-
 	system("pause");
 	return EXIT_SUCCESS;
 }

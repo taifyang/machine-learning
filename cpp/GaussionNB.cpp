@@ -8,11 +8,23 @@
 
 #define PI 3.1415926
 
+/**
+ * @description: 	高斯朴素贝叶斯模型
+ */
 class GaussionNB
 {
 public:
+	/**
+	 * @description: 	构造函数
+	 * @param fit_prior	是否学习类的先验几率，False则使用统一的先验
+	 */
 	GaussionNB(bool fit_prior = true) : m_fit_prior(fit_prior) {}
 
+	/**
+	 * @description: 	建立模型
+	 * @param x			特征
+	 * @param y			标签
+	 */
 	void fit(std::vector<std::vector<float>> x, std::vector<float> y)
 	{
 		for (auto i : y)
@@ -25,11 +37,13 @@ public:
 				for (auto d : m_classes)
 					m_class_prior[d] = 1.0 / class_num;
 			}
-			else {
+			else
+			{
 				for (auto d : m_classes)
 				{
 					float c_num = 0;
-					for (auto i : y)	c_num += (d == i ? 1 : 0);
+					for (auto i : y)
+						c_num += (d == i ? 1 : 0);
 					m_class_prior[d] = c_num / y.size();
 				}
 			}
@@ -37,24 +51,23 @@ public:
 
 		for (auto pa : m_class_prior)
 		{
-			//std::cout << pa.first << " " << pa.second << std::endl;
 			std::vector<int> y_index;
 			for (size_t i = 0; i < y.size(); i++)
 			{
-				if (y[i] == pa.first)	y_index.push_back(i);
+				if (y[i] == pa.first)
+					y_index.push_back(i);
 			}
-			//for (size_t j = 0; j < y_index.size(); j++) std::cout << y_index[j] << " "; std::cout << std::endl;
-			
+
 			for (size_t i = 0; i < x.size(); i++)
 			{
 				std::vector<float> x_class;
 
-				for (auto j:y_index)
+				for (auto j : y_index)
 				{
 					x_class.push_back(x[i][j]);
 
 					std::string pkey = std::to_string(i) + "|" + std::to_string(pa.first);
-					
+
 					float mean_val = 0;
 					for (size_t k = 0; k < x_class.size(); k++)
 					{
@@ -71,20 +84,27 @@ public:
 					var_val /= x_class.size();
 					m_var[pkey] = var_val;
 				}
-
-				//for (auto i : x_class)	std::cout << i << " "; std::cout << std::endl;
 			}
 		}
-
-		//for (auto pa : m_mean)	std::cout << pa.first << " " << pa.second << std::endl;
-		//for (auto pa : m_var)	std::cout << pa.first << " " << pa.second << std::endl;
 	}
 
+	/**
+	 * @description: 	计算高斯概率
+	 * @param mu		均值
+	 * @param sigma		方差
+	 * @param x			特征
+	 * @return			高斯概率
+	 */
 	float _calculat_prob_gaussion(float mu, float sigma, float x)
 	{
-		return 1.0 / (sigma*sqrt(2 * PI))*exp(-pow(x - mu, 2) / (2 * pow(sigma, 2)));
+		return 1.0 / (sigma * sqrt(2 * PI)) * exp(-pow(x - mu, 2) / (2 * pow(sigma, 2)));
 	}
 
+	/**
+	 * @description: 	预测
+	 * @param x			特征
+	 * @return			预测值
+	 */
 	std::vector<float> predict(std::vector<std::vector<float>> x)
 	{
 		std::vector<float> labels;
@@ -97,23 +117,19 @@ public:
 				for (size_t j = 0; j < x[i].size(); ++j)
 				{
 					std::string tkey = std::to_string(j) + "|" + std::to_string(pa.first);
-					//std::cout << tkey << std::endl;
 
 					float mu = m_mean[tkey];
 					float sigma = m_var[tkey];
-					//std::cout << mu << " " << sigma << std::endl;
 					m_predict_prob[pa.first] *= _calculat_prob_gaussion(mu, sigma, x[i][j]);
 				}
 			}
 
-			//for (auto pa : m_predict_prob)	std::cout << pa.first << " " << pa.second << std::endl;
-
-			std::vector<std::pair<float, float>>  m_predict_prob_vec;
+			std::vector<std::pair<float, float>> m_predict_prob_vec;
 			for (std::map<float, float>::iterator it = m_predict_prob.begin(); it != m_predict_prob.end(); it++)
 			{
 				m_predict_prob_vec.push_back(std::make_pair((*it).first, (*it).second));
 			}
-			std::sort(m_predict_prob_vec.begin(), m_predict_prob_vec.end(), [](std::pair<float, float> p1, std::pair<float, float> p2) {return p1.second < p2.second; });
+			std::sort(m_predict_prob_vec.begin(), m_predict_prob_vec.end(), [](std::pair<float, float> p1, std::pair<float, float> p2) { return p1.second < p2.second; });
 			float label = m_predict_prob_vec.rbegin()->first;
 			labels.push_back(label);
 		}
@@ -122,25 +138,44 @@ public:
 	}
 
 private:
+	/**
+	 * @description: 	是否学习类的先验几率，False则使用统一的先验
+	 */
 	bool m_fit_prior;
+
+	/**
+	 * @description: 	类的先验几率，若指定则先验不能根据数据调整  
+	 */
 	std::map<float, float> m_class_prior;
+
+	/**
+	 * @description: 	类别
+	 */
 	std::set<float> m_classes;
+
+	/**
+	 * @description: 	均值
+	 */
 	std::map<std::string, float> m_mean;
+
+	/**	
+	 * @description: 	方差
+	 */
 	std::map<std::string, float> m_var;
+
+	/**
+	 * @description: 	预测概率
+	 */
 	std::map<float, float> m_predict_prob;
 };
 
-
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-	std::vector<std::vector<float>> x = { { 1,1,1,1,1,2,2,2,2,2,3,3,3,3,3 },{ 1,2,2,1,1,1,2,2,3,3,3,2,2,3,3 } };
-	std::vector<float> y = { -1,-1,1,1,-1,-1,-1,1,1,1,1,1,1,1,-1 };
-
+	std::vector<std::vector<float>> x = {{1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3}, {1, 2, 2, 1, 1, 1, 2, 2, 3, 3, 3, 2, 2, 3, 3}};
+	std::vector<float> y = {-1, -1, 1, 1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1};
 	GaussionNB gnb = GaussionNB();
 	gnb.fit(x, y);
-	std::cout << "Ԥ��ֵΪ��" << gnb.predict({ { 2,1 } })[0] << std::endl;
-
+	std::cout << "预测值为：" << gnb.predict({{2, 1}})[0] << std::endl;
 	system("pause");
 	return EXIT_SUCCESS;
 }
-

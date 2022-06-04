@@ -3,9 +3,19 @@
 #include <random>
 #include <ctime>
 
+/**
+ * @description: 	EM模型
+ */
 class EM
 {
 public:
+	/**
+	 * @description: 	构造函数
+	 * @param x			特征
+	 * @param sigma		高斯分布均方差
+	 * @param k			高斯混合模型数
+	 * @param n			数据个数
+	 */
 	EM(std::vector<std::vector<float>> x, float sigma, int k, int n)
 	{
 		m_x = x;
@@ -29,6 +39,9 @@ public:
 		}
 	}
 
+	/**
+	 * @description: 	EM算法步骤1，计算E[zij]
+	 */
 	void e_step()
 	{
 		for (size_t i = 0; i < m_n; i++)
@@ -36,16 +49,19 @@ public:
 			float denom = 0;
 			for (size_t j = 0; j < m_k; j++)
 			{
-				denom += exp((-1 / (2 * pow(m_sigma, 2)))*pow(m_x[0][i] - m_mu[j],2));
+				denom += exp((-1 / (2 * pow(m_sigma, 2))) * pow(m_x[0][i] - m_mu[j], 2));
 			}
 			for (size_t j = 0; j < m_k; j++)
 			{
-				float numer = exp((-1 / (2 * pow(m_sigma, 2)))*pow(m_x[0][i] - m_mu[j], 2));
+				float numer = exp((-1 / (2 * pow(m_sigma, 2))) * pow(m_x[0][i] - m_mu[j], 2));
 				m_expectations[i][j] = numer / denom;
 			}
 		}
 	}
 
+	/**
+	 * @description: 	EM算法步骤2，求最大化E[zij]的参数mu
+	 */
 	void m_step()
 	{
 		for (size_t j = 0; j < m_k; j++)
@@ -61,6 +77,11 @@ public:
 		}
 	}
 
+	/**
+	 * @description: 	预测
+	 * @param iter_num	迭代次数
+	 * @param epsilon	精度
+	 */
 	void predict(int iter_num, float epsilon)
 	{
 		for (size_t i = 0; i < iter_num; i++)
@@ -68,7 +89,9 @@ public:
 			std::vector<float> old_mu = m_mu;
 			e_step();
 			m_step();
-			for (auto j : m_mu) std::cout << j << " "; std::cout << std::endl;
+			for (auto j : m_mu)
+				std::cout << j << " ";
+			std::cout << std::endl;
 
 			float error = 0;
 			for (size_t j = 0; j < m_mu.size(); j++)
@@ -81,15 +104,38 @@ public:
 	}
 
 private:
+	/**
+	 * @description: 	特征
+	 */
 	std::vector<std::vector<float>> m_x;
+
+	/**
+	 * @description: 	高斯分布均方差
+	 */
 	float m_sigma;
+
+	/**
+	 * @description: 	高斯混合模型数
+	 */
 	int m_k;
+
+	/**
+	 * @description: 	数据个数
+	 */
 	int m_n;
+
+	/**
+	 * @description: 	高斯分布均值
+	 */
 	std::vector<float> m_mu;
+
+	/**
+	 * @description: 	期望
+	 */
 	std::vector<std::vector<float>> m_expectations;
 };
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	float sigma = 6;
 	float mu1 = 40;
@@ -107,17 +153,16 @@ int main(int argc, char* argv[])
 			std::normal_distribution<double> dist(mu1, sigma);
 			x[0][i] = dist(generator);
 		}
-		else {
+		else
+		{
 			std::normal_distribution<double> dist(mu2, sigma);
 			x[0][i] = dist(generator);
 		}
-		//std::cout << x[0][i] << std::endl;
 	}
-	
+
 	EM em = EM(x, sigma, k, n);
 	em.predict(100, 0.001);
 
 	system("pause");
 	return EXIT_SUCCESS;
 }
-

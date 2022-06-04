@@ -1,22 +1,49 @@
 import numpy as np
 
-#感知机模型
+'''
+description:    感知机模型
+'''
 class Perceptron:
+    '''
+    description:    构造函数
+    param self
+    param x         特征
+    param y         标签
+    ''' 
     def __init__(self,x,y):
-        self.x=x
-        self.y=y
-        self.w=np.zeros(self.x.shape[1]) #初始化权重w
+        self.x = x
+        self.y = y
+        self.w = np.zeros(self.x.shape[1]) 
         self.b = 0
 
+    '''
+    description:    计算y
+    param self
+    param w         权重
+    param b         偏差
+    param x         x
+    return          y
+    '''
     def sign(self, w, b, x):
         y = np.dot(x, w)+b
         return int(y)
 
+    '''
+    description:    更新权重
+    param self
+    param label_i   标签
+    param data_i    数据
+    '''
     def update(self,label_i,data_i):  
         tmp = label_i*data_i
         self.w += tmp
         self.b += label_i
 
+    '''
+    description:    训练
+    param self
+    return          权重和偏差
+    '''
     def train(self):
         isFind=False
         while not isFind:
@@ -30,9 +57,8 @@ class Perceptron:
                 isFind=True
         return self.w, self.b
         
-
 if __name__ == '__main__':
-    x = np.array([[3,-3],[4,-3],[1,1],[1,2]])
+    x = np.array([[3,-3], [4,-3], [1,1], [1,2]])
     y = np.array([-1, -1, 1, 1])
     myperceptron = Perceptron(x, y)
     w, b = myperceptron.train()

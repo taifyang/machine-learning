@@ -2,6 +2,10 @@
 #include <vector>
 #include <time.h>
 
+/**
+ * @description: 	打印矩阵
+ * @param mat		输入矩阵
+ */
 void printMat(std::vector<std::vector<float>> mat)
 {
 	for (size_t i = 0; i < mat.size(); i++)
@@ -15,6 +19,11 @@ void printMat(std::vector<std::vector<float>> mat)
 	std::cout << std::endl;
 }
 
+/**
+* @description: 	判断是否是零矩阵
+* @param mat		输入矩阵
+* @return			是否是零矩阵
+*/
 bool checkZeros(std::vector<std::vector<float>> mat)
 {
 	bool flag = true;
@@ -22,12 +31,18 @@ bool checkZeros(std::vector<std::vector<float>> mat)
 	{
 		for (size_t j = 0; j < mat[0].size(); j++)
 		{
-			if (mat[i][j] != 0) flag = false;
+			if (mat[i][j] != 0)
+				flag = false;
 		}
 	}
 	return flag;
 }
 
+/**
+* @description: 	计算最短距离点的索引
+* @param clalist	样本到质心的距离
+* @return			最短距离点的索引
+*/
 std::vector<int> getminDistIndices(std::vector<std::vector<float>> clalist)
 {
 	std::vector<int> minDistIndices(clalist.size());
@@ -43,17 +58,29 @@ std::vector<int> getminDistIndices(std::vector<std::vector<float>> clalist)
 				minDistIndex = j;
 			}
 		}
-		//std::cout << minDistIndex << std::endl;
 		minDistIndices[i] = minDistIndex;
 	}
 	return minDistIndices;
 }
 
+/**
+* @description: 	KMeans模型
+*/
 class KMeans
 {
 public:
-	KMeans(std::vector<std::vector<float>> dataSet, int k) :m_dataSet(dataSet), m_k(k) {};
+	/**
+	* @description: 	构造函数
+	* @param dataSet	数据
+	* @param k			聚类数目
+	*/
+	KMeans(std::vector<std::vector<float>> dataSet, int k) : m_dataSet(dataSet), m_k(k){};
 
+	/**
+	* @description: 	计算欧拉距离
+	* @param centroids	聚类中心
+	* @return 			返回一个每个点到质点的距离
+	*/
 	std::vector<std::vector<float>> calcDis(std::vector<std::vector<float>> centroids)
 	{
 		std::vector<std::vector<float>> clalist;
@@ -84,11 +111,16 @@ public:
 			clalist.push_back(squaredDist);
 		}
 
-		//printMat(clalist);
 		return clalist;
 	}
 
-	void classify(std::vector<std::vector<float>> centroids, std::vector<std::vector<float>>& newCentroids, std::vector<std::vector<float>>& changed)
+	/**
+	* @description: 		计算质心
+	* @param centroids		质心
+	* @param newCentroids	新质心
+	* @param changed		新质心
+	*/
+	void classify(std::vector<std::vector<float>> centroids, std::vector<std::vector<float>> &newCentroids, std::vector<std::vector<float>> &changed)
 	{
 		std::vector<std::vector<float>> clalist = calcDis(centroids);
 		std::vector<int> minDistIndices = getminDistIndices(clalist);
@@ -106,12 +138,9 @@ public:
 
 			for (size_t j = 0; j < m_k; j++)
 			{
-				//std::cout << sum[j] <<" "<<num[j] << std::endl;
 				newCentroids[j][i] = sum[j] / num[j];
 			}
 		}
-
-		//printMat(newCentroids);
 
 		changed.resize(m_k, std::vector<float>(m_dataSet[0].size()));
 		for (size_t i = 0; i < changed.size(); i++)
@@ -123,14 +152,19 @@ public:
 		}
 	}
 
-	void predict(std::vector<std::vector<float>>& centroids, std::vector<std::vector<std::vector<float>>>& cluster)
+	/**
+	* @description: 	预测
+	* @param centroids	质心
+	* @param cluster	聚类
+	*/
+	void predict(std::vector<std::vector<float>> &centroids, std::vector<std::vector<std::vector<float>>> &cluster)
 	{
 		srand((unsigned)time(NULL));
 		std::vector<int> random_indices;
 		while (random_indices.size() < m_k)
 		{
 			int random_index = rand() % m_dataSet.size();
-			if(find(random_indices.begin(), random_indices.end(), random_index)== random_indices.end())
+			if (find(random_indices.begin(), random_indices.end(), random_index) == random_indices.end())
 				random_indices.push_back(random_index);
 		}
 
@@ -143,19 +177,16 @@ public:
 		std::vector<std::vector<float>> newCentroids;
 		std::vector<std::vector<float>> changed;
 		classify(centroids, newCentroids, changed);
-		//printMat(centroids); printMat(newCentroids);
 
 		while (!checkZeros(changed))
 		{
 			std::vector<std::vector<float>> copyCentroids = newCentroids;
 			classify(copyCentroids, newCentroids, changed);
-			//printMat(changed);
 		}
 		centroids = newCentroids;
 
 		std::vector<std::vector<float>> clalist = calcDis(newCentroids);
 		std::vector<int> minDistIndices = getminDistIndices(clalist);
-		//for (auto i : minDistIndices)	std::cout << i << std::endl;
 
 		cluster.resize(m_k);
 		for (size_t i = 0; i < minDistIndices.size(); i++)
@@ -165,27 +196,27 @@ public:
 	}
 
 private:
+	/**
+	* @description: 	数据
+	*/
 	std::vector<std::vector<float>> m_dataSet;
+
+	/**
+	* @description: 	聚类数目
+	*/
 	int m_k;
 };
 
-
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-	std::vector<std::vector<float>> dataSet = { {1, 1},{1, 2},{2, 1},{6, 4},{6, 3},{5, 4} };
-	//std::vector<std::vector<float>> centroids = { {1, 2},{6, 4} };
-	int k = 2;
-	KMeans kmeans = KMeans(dataSet, k);
-	//kmeans.calcDis(centroids);
-	//kmeans.classify(centroids);
-
+	std::vector<std::vector<float>> dataSet = {{1, 1}, {1, 2}, {2, 1}, {6, 4}, {6, 3}, {5, 4}};
+	KMeans kmeans = KMeans(dataSet, 2);
 	std::vector<std::vector<float>> centroids;
 	std::vector<std::vector<std::vector<float>>> cluster;
 	kmeans.predict(centroids, cluster);
 	printMat(centroids);
-	printMat(cluster[0]); printMat(cluster[1]);
-
+	printMat(cluster[0]);
+	printMat(cluster[1]);
 	system("pause");
 	return EXIT_SUCCESS;
 }
-
